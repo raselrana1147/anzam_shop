@@ -20,7 +20,6 @@ class CreateUsersTable extends Migration
             $table->string('phone')->unique()->nullable();
             $table->string('avatar')->nullable();
             $table->string('password');
-            $table->text('firebase_token')->nullable();
             $table->text('address')->nullable();
             $table->rememberToken();
             $table->timestamps();

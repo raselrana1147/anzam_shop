@@ -83,6 +83,14 @@ $(document).ready(function(){
                   {
                     $('#top_sale').prop('checked', false)
                   }
+
+                  if (data.publish==0) 
+                  {
+                    $('#publish').prop('checked', true)
+                  }else
+                  {
+                    $('#publish').prop('checked', false)
+                  }
               },
            })
 

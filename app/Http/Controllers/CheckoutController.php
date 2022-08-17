@@ -16,7 +16,7 @@ use Session;
 
 class CheckoutController extends Controller
 {
-    
+
 
 	public function __construct()
 	{
@@ -34,24 +34,76 @@ class CheckoutController extends Controller
     public function submit_checkout(Request $request)
     {
 
-    
-        $info = array('customer_name' =>$request->name,
-               'customer_phone'       =>$request->phone,
-               'customer_email'       =>$request->email,
-               'customer_address'     =>$request->address,
-               'city'                 =>$request->city,
-               'zip_code'             =>$request->zip_code,
-               'order_note'           =>$request->note
-             );
-         Session::put('info',$info);
-        return redirect(route('process_payment'));
+
+         $order_number=rand(10000,99999);
+         $carts=carts();
+         $first_cart=first_cart();
+           
+         //inser Order table
+         $order                  =new Order();
+         $order->user_id         =Auth::user()->id;
+         $order->quantity        =total_item();
+         $order->amount          =total_price();
+         $order->total_item_total=total_price();
+         $order->sub_total       =sub_total();
+         $order->tax             =tax();
+         $order->shipping_charge =shipping_charge();
+         $order->grand_total     =grand_total();
+         $order->order_number    =$order_number;
+         $order->order_note      =$request->note;
+         $order->payment_id      =$request->payment_id;
+
+         if ($request->has('transaction_number')) 
+         {
+           $order->transaction_number=$request->transaction_number;
+         }
+         
+
+         if ($first_cart->coupon_id!=null) 
+         {
+             $order->coupon_id=$first_cart->coupon_id;
+         }
+
+        
+         $order->save();
+        
+         foreach ($carts as $cart) {
+           
+           $order_detail                  =new OrderDetail();
+           $order_detail->order_id        =$order->id;
+           $order_detail->product_id      =$cart->product_id;
+           $order_detail->user_id         =Auth::user()->id;
+           $order_detail->product_quantity=$cart->quantity;
+           $order_detail->save();
+        
+         }
+        // insert data into billing details table
+         $billing_detail                  =new BillingDetail();
+         $billing_detail->user_id         =Auth::user()->id;
+         $billing_detail->order_id        =$order->id;
+         $billing_detail->customer_name   =$request->name;
+         $billing_detail->customer_email  =$request->email;
+         $billing_detail->customer_phone  =$request->phone;
+         $billing_detail->customer_address=$request->address;
+         $billing_detail->zip_code        =$request->zip_code;
+         $billing_detail->city            =$request->city;;
+        
+         $billing_detail->save();
+
+         foreach ($carts as $c) 
+         {
+           $c->delete();
+         }
+         $orders=OrderDetail::where('order_id',$order->id)->get();
+         session()->flash('message','Your order has placed successfully.Our team will contact with you as soon as possible');
+         return view('front.checkout_success',compact('orders','order'));
 
     }
 
 
     public function success_checkout()
     {
-       
+
        $status_code=$_GET['status_code'];
       if ($status_code ==="00_0000_000") {
            $info          =Session::get('info');
@@ -61,7 +113,7 @@ class CheckoutController extends Controller
             $order_number=rand(10000,99999);
             $carts=carts();
             $first_cart=first_cart();
-              
+
             //inser Order table
             $order                    =new Order();
             $order->user_id           =Auth::user()->id;
@@ -75,24 +127,24 @@ class CheckoutController extends Controller
             $order->order_number      =$order_number;
             $order->order_note=$info['order_note'];
             $order->order_id=$order_id;
-            
 
-            if ($first_cart->coupon_id!=null) 
+
+            if ($first_cart->coupon_id!=null)
             {
                 $order->coupon_id=$first_cart->coupon_id;
             }
 
-    
+
              $order->save();
             foreach ($carts as $cart) {
-              
+
               $order_detail                  =new OrderDetail();
               $order_detail->order_id        =$order->id;
               $order_detail->product_id      =$cart->product_id;
               $order_detail->user_id         =Auth::user()->id;
               $order_detail->product_quantity=$cart->quantity;
               $order_detail->save();
-          
+
             }
            // insert data into billing details table
             $billing_detail                  =new BillingDetail();
@@ -104,37 +156,37 @@ class CheckoutController extends Controller
             $billing_detail->customer_address=$info['customer_address'];
             $billing_detail->zip_code        =$info['zip_code'];
             $billing_detail->city            =$info['city'];
-        
+
             $billing_detail->save();
 
-            foreach ($carts as $c) 
+            foreach ($carts as $c)
             {
               $c->delete();
             }
             $orders=OrderDetail::where('order_id',$order->id)->get();
             return view('front.checkout_success',compact('orders','order','order_id','payment_ref_id'));
-        
+
       }else{
         return '<a href="'.route('checkout').'">Your Transaction is failed. Please Checkout again<a/>';
       }
-      
+
     }
 
-    
+
     public function process_payment()
     {
-    
+
        // return app_path().'\Helpers\helper.php';
         include(app_path() . '/Helpers/helper.php');
-       
-     
+
+
        date_default_timezone_set('Asia/Dhaka');
 
        $MerchantID = "683002007104225";
        $DateTime = Date('YmdHis');
        $amount = grand_total();
        $OrderId = 'TEST'.strtotime("now").rand(1000, 10000);
-       $random = generateRandomString();    
+       $random = generateRandomString();
 
        $PostURL = "http://sandbox.mynagad.com:10080/remote-payment-gateway-1.0/api/dfs/check-out/initialize/" . $MerchantID . "/" . $OrderId;
 
@@ -157,7 +209,7 @@ class CheckoutController extends Controller
            'signature' => SignatureGenerate(json_encode($SensitiveData))
        );
 
-       // echo json_encode($PostData); 
+       // echo json_encode($PostData);
        // echo "<br/>";
        // echo $PostURL;
        // exit;
@@ -196,22 +248,22 @@ class CheckoutController extends Controller
                        'additionalMerchantInfo' => json_decode($merchantAdditionalInfo)
                    );
 
-                             
+
                    $OrderSubmitUrl = "http://sandbox.mynagad.com:10080/remote-payment-gateway-1.0/api/dfs/check-out/complete/" . $paymentReferenceId;
                    $Result_Data_Order = HttpPostMethod($OrderSubmitUrl, $PostDataOrder);
-                   
+
                        if ($Result_Data_Order['status'] == "Success") {
-                           $url = json_encode($Result_Data_Order['callBackUrl']);   
-                           echo "<script>window.open($url, '_self')</script>";  
-                                   
+                           $url = json_encode($Result_Data_Order['callBackUrl']);
+                           echo "<script>window.open($url, '_self')</script>";
+
                        }
                        else {
                            echo json_encode($Result_Data_Order);
-                            
+
                        }
                } else {
                    echo json_encode($PlainResponse);
-                       
+
                }
            }
        }

@@ -6,14 +6,14 @@
 </div>
 <div class="vertical-wrapper" >
 <span id="remove-verticalmenu" class="fa fa-times"></span>
-<div class="megamenu-pattern">
+<div class="megamenu-pattern show-menubar-section" style="display: {{Route::is('front.index') ? 'block' : 'none';}}">
     <div class="container-mega">
         <ul class="megamenu">
             @foreach (categories() as $category)
             <li class="item-vertical  with-sub-menu hover">
                 <p class="close-menu"></p>
                 <a href="{{ route('product.category_product',$category->id) }}" class="clearfix">
-                    <img src="{{ asset('assets/frontend/assets/image/catalog/menu/icons/ico10.png')}}" alt="icon">
+                    <img src="{{ asset('assets/frontend/assets/image/catalog/menu/icons/ico'.array_rand(icons()).'.'.'png')}}" alt="icon">
                     <span>{{$category->category_name}}</span>
                     @if (count($category->sub_categories)>0) 
                        <b class="fa-angle-right"></b>
@@ -36,7 +36,7 @@
                                                     <ul>
                                                         @foreach ($sub->child_category as $child)
                                                         <li><a href="{{ route('product.childcategory_product',$child->id) }}" >{{$child->child_cat_name}}</a></li>
-                                                           @endforeach
+                                                    @endforeach
                                                     </ul>
                                                 </li>
                                             </ul>

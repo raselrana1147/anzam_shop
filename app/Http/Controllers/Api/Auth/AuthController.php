@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    
+
     public function __construct()
     {
        $this->middleware('auth:api',['except'=>'login']);
     }
 
-    
+
     public function login(Request $request)
     {
        // return $request->ip();
@@ -31,8 +31,7 @@ class AuthController extends Controller
                $credentials = $request->only([$field, 'password']);
                if ($token = $this->guard()->attempt($credentials)) {
                 $user=auth('api')->user();
-                $user->firebase_token=$request->firebase_token;
-                $user->save();
+
                  return response()->json([
                    "message"=>"Successfully Login",
                    "status" =>200,
@@ -51,7 +50,7 @@ class AuthController extends Controller
                    "access_token"=>null,
                    "token_type"=>"bearer"
                  ],401);
-         
+
          }else{
 
              return response()->json([
@@ -62,15 +61,15 @@ class AuthController extends Controller
                    "access_token"=>null,
                    "token_type"=>"bearer"
              ],Response::HTTP_FORBIDDEN);
-         } 
+         }
     }
 
-    
+
      public function profile()
     {
         //return response()->json(auth()->user());
         $user=DB::table('users')
-        ->select('name','email','phone','avatar','address','gender','created_at')
+        ->select('name','email','phone','avatar','address','created_at')
         ->whereId(auth()->user()->id)->first();
         return response()
         ->json([
@@ -79,7 +78,7 @@ class AuthController extends Controller
             ],Response::HTTP_OK);
     }
 
-    
+
     public function logout()
     {
         $user=auth('api')->user();
@@ -94,19 +93,19 @@ class AuthController extends Controller
             ],Response::HTTP_OK);
     }
 
-    
+
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
     }
 
-    
+
     protected function respondWithToken($token)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            
+
         ]);
     }
 

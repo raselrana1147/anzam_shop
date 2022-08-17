@@ -31,7 +31,7 @@
 @endsection
 @section('js')
 
- <script>
+  <script>
          var table = $("#tables_item").DataTable({
              processing: true,
              responsive: true,

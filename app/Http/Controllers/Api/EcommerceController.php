@@ -17,7 +17,7 @@ class EcommerceController extends Controller
 	{
 	  $this->middleware('auth:api',['only'=>'coupon_list']);
 	}
-	
+
   public function slider()
   {
       $sliders=DB::table('sliders')->orderByDesc('id')->get(['id','image']);
@@ -26,10 +26,10 @@ class EcommerceController extends Controller
        'status' =>200
      ],Response::HTTP_OK);
   }
-    
+
     public function category()
     {
-    
+
       $categories=Category::withCount('products')->orderBy('id','desc')
       ->get(['id','category_name','image']);
 
@@ -39,8 +39,8 @@ class EcommerceController extends Controller
     	],Response::HTTP_OK);
 
     }
-    
-    
+
+
     public function sub_category($id)
     {
          $sub_categories=DB::table('sub_categories')
@@ -57,7 +57,7 @@ class EcommerceController extends Controller
 
     public function brand()
     {
-       
+
         $brands=Brand::withCount('products')->orderBy('id','desc')
         ->get(['id','brand_name','image']);
           return response()->json([
@@ -66,15 +66,15 @@ class EcommerceController extends Controller
         ],Response::HTTP_OK);
 
     }
-    
-    
+
+
     public function whole_sale_product(Request $request)
     {
         //  $products=DB::table('products')
         //  ->where(['sale_type'=>'whole','flash_deal'=>1])
         //  ->orderBy('id','DESC')
         //  ->paginate(1,['*'],"page",$request->page);
-        
+
          $products=DB::table('products')
          ->where(['sale_type'=>'whole','flash_deal'=>1])
          ->orderBy('id','DESC')
@@ -86,8 +86,8 @@ class EcommerceController extends Controller
            'status' =>200
          ],Response::HTTP_OK);
     }
-    
-    
+
+
     public function featured_product()
     {
       $products=DB::table('products')
@@ -110,7 +110,7 @@ class EcommerceController extends Controller
         'status' =>200
       ],Response::HTTP_OK);
     }
-    
+
       public function trending_product()
     {
         $products=DB::table('products')
@@ -134,7 +134,7 @@ class EcommerceController extends Controller
           'status' =>200
         ],Response::HTTP_OK);
     }
-    
+
     public function best_sale_product()
     {
        $products=DB::table('products')
@@ -163,6 +163,19 @@ class EcommerceController extends Controller
     }
 
 
+
+
+  public function recommended_product()
+  {
+         $recommendeds=Product::all()->where(['publish'=>0])->random(12);
+
+          return response()->json([
+          'products'=>$recommendeds,
+          'status' =>200
+         ],Response::HTTP_OK);
+  }
+
+
     public function new_arrival_product()
     {
        $products=DB::table('products')
@@ -189,11 +202,11 @@ class EcommerceController extends Controller
        ],Response::HTTP_OK);
 
     }
-    
-    
+
+
      public function flash_deal_product()
     {
-       
+
        $products=DB::table('products')
        ->where(['flash_deal'=>0])->orderBy('id','DESC')
        ->take(12)->get();
@@ -220,23 +233,23 @@ class EcommerceController extends Controller
        ],Response::HTTP_OK);
 
     }
-    
+
     public function product_detail($id)
     {
-       $product=Product::with('galleries')->findOrFail($id);
+       $product=Product::with('galleries','brand','category')->findOrFail($id);
         return response()->json([
         'product'=>$product,
         'status' =>200
       ],Response::HTTP_OK);
-      
+
     }
-    
-    public function barnd_wise_product($id)
+
+    public function barnd_wise_product($id,$page)
     {
-       
+
        $products=DB::table('products')
-       ->where(['brand_id'=>$id])->orderBy('id','DESC')
-       ->get();
+       ->where(['brand_id'=>$id,'publish'=>0])->orderBy('id','DESC')
+       ->paginate(12,['*'],'page',$page);
          return response()->json([
          'products'=>$products,
          'status' =>200
@@ -244,12 +257,12 @@ class EcommerceController extends Controller
 
     }
 
-    public function category_wise_product($id)
+    public function category_wise_product($id,$page)
     {
-       
+
        $products=DB::table('products')
-       ->where(['category_id'=>$id])->orderBy('id','DESC')
-       ->get();
+       ->where(['category_id'=>$id,'publish'=>0])->orderBy('id','DESC')
+       ->paginate(12,['*'],'page',$page);
          return response()->json([
          'products'=>$products,
          'status' =>200
@@ -257,19 +270,19 @@ class EcommerceController extends Controller
 
     }
 
-    public function subcat_wise_product($id)
+    public function subcat_wise_product($id,$page=null)
     {
-       
+
        $products=DB::table('products')
-       ->where(['sub_category_id'=>$id])->orderBy('id','DESC')
-       ->get();
+       ->where(['sub_category_id'=>$id,'publish'=>0])->orderBy('id','DESC')
+       ->paginate(12,['*'],'page',$page);
          return response()->json([
          'products'=>$products,
          'status' =>200
        ],Response::HTTP_OK);
 
     }
-    
+
     public function coupon_list()
     {
        $coupons=DB::table('coupons')->orderBYDesc('id')->get();
@@ -279,7 +292,21 @@ class EcommerceController extends Controller
          'status' =>200
        ],Response::HTTP_OK);
     }
-    
+
+
+    public function search_product(Request $request)
+    {
+        $products=Product::where('name',"LIKE","%$request->keyword%")
+        ->orWhere('title',"LIKE","%$request->keyword%")
+        ->where(['publish'=>0])->paginate(12,['*'],'page',$request->page);
+
+        return response()->json([
+            'product'=>$products,
+            'status' =>202
+          ],Response::HTTP_OK);
+
+    }
+
     public function apply_coupon(Request $request)
     {
 
@@ -288,7 +315,7 @@ class EcommerceController extends Controller
        ->where('coupon_code',$request->coupon_code)
        ->first();
 
-       if (is_null($coupon)) 
+       if (is_null($coupon))
        {
           return response()->json([
            'coupons'=>'No coupon found',
@@ -298,7 +325,7 @@ class EcommerceController extends Controller
             return response()->json([
            'coupons'=>'This coupon has been expired',
            'status' =>202
-         ],Response::HTTP_OK);                              
+         ],Response::HTTP_OK);
       }
        else{
            return response()->json([

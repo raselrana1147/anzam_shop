@@ -86,20 +86,18 @@ class OderController extends Controller
        $order=Order::findOrFail($id);
        return view('admin.order.map',compact('order'));
     }
-
-
-
+    
     public function status_change(Request $request){
 
                 $order=Order::findOrFail($request->order_id);
                 $order->status=$request->status;
                 $order->save();
-
-                //reduce stock after confirm order
-                if ($request->status==="delivered"){
+                
+                if ($request->status==="delivered")
+                {
                     $data=OrderDetail::where('order_id',$request->order_id)->get();
                     foreach ($data as $item){
-                           //check product type
+                           //increment total product order
                             $product=Product::findOrFail($item->product_id);
                             $product->increment('total_order');
                             $product->save();

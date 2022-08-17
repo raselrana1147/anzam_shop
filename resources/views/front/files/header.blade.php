@@ -108,10 +108,7 @@
                                 <i class="fa fa-shopping-bag"></i>
                               </span>
                                         <div class="shopcart-inner">
-                                            <p class="text-shopping-cart">
-
-                                                My cart
-                                            </p>
+                                            <p class="text-shopping-cart"> My cart</p>
 
                                             <span class="total-shopping-cart cart-total-full">
                                    <span class="items_cart cart-count">{{total_item()}}</span><span class="items_cart2"> item(s)</span><span class="items_carts sub_total"> ({{price_format(sub_total())}}) </span>
@@ -217,7 +214,7 @@
                             <div class="so-vertical-menu ">
                                 <nav class="navbar-default">    
                                     
-                                    <div class="container-megamenu vertical">
+                                    <div class="container-megamenu vertical hover-menuvar-section">
                                         <div id="menuHeading">
                                             <div class="megamenuToogle-wrapper">
                                                 <div class="megamenuToogle-pattern">
@@ -233,9 +230,9 @@
                                             </div>
                                         </div>
                                      
-                                        @if (Route::is(['front.index']))
+                                        {{-- @if (Route::is(['front.index'])) --}}
                                            @include('front.files.category')
-                                      @endif 
+                                      {{-- @endif  --}}
 
                                         </div>
                                     </nav>
@@ -301,7 +298,7 @@
                         <div class="telephone hidden-xs hidden-sm hidden-md">
                             <ul class="blank"> 
                                 <li><a href="#"><i class="fa fa-truck"></i>track your order</a></li> 
-                                <li><a href="#"><i class="fa fa-phone-square"></i>Hotline (+123)4 567 890</a></li> 
+                                <li><a href="{{ route('seller.login') }}" class="btn btn-light btn-sm seller-zone"><span class="anaimate_seller_zone">&#9733;</span> Seller Zone <span class="anaimate_seller_zone">&#9733;</span></a></li> 
                             </ul>
                         </div>  
                         <div class="signin-w hidden-md hidden-sm hidden-xs">

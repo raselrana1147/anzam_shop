@@ -1,3 +1,5 @@
+
+@if (count($flash_deals)>0)
 <div class="module deals-layout1">
                     <div class="head-title">
                         <div class="modtitle">
@@ -7,13 +9,24 @@
                                 
                                 <div class="item-time">
                                   <div class="item-timer">
-                                    <div class="defaultCountdown-30"></div>
+                                      @php
+                                         $now_date=date('Y-m-d H:i:s');
+                                         $remain_time=strtotime($flash_deals[0]->end_date)-strtotime($now_date);
+                                         $formated_time=date("d:H:i:s",$remain_time);
+                                         $time_to_array=explode(':', $formated_time);
+                                        @endphp
+                                       <span class="flash_deal_time">{{$time_to_array[0]}}</span>
+                                       <span class="flash_deal_time">{{$time_to_array[1]}}</span>
+                                       <span class="flash_deal_time">{{$time_to_array[2]}}</span>
+                                       <span class="flash_deal_time">{{$time_to_array[3]}}</span>
+
+                                  
                                   </div>
                                 </div>
                               </div>
                             </div>
                               
-                              <a class="viewall" href="?route=product/special">View All</a>
+                              <a class="viewall" href="">View All</a>
                             
                         </div>    
                     </div>
@@ -27,7 +40,7 @@
                                         <div class="product-item-container">
                                             <div class="left-block left-b">
                                                 <div class="box-label">
-                                                    <span class="label-product label-sale">-11%</span>
+                                                    <span class="label-product label-sale">-{{$flash_deal->discount}}%</span>
                                                 </div>
                                                 <div class="product-image-container second_img">
                                                     <a href="{{ route('product.detail',$flash_deal->slug) }}" target="_self" title="Pastrami bacon">
@@ -90,3 +103,4 @@
                         </div>
                       </div>
                 </div>
+              @endif

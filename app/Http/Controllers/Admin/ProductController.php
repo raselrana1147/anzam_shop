@@ -35,19 +35,25 @@ class ProductController extends Controller
           
             return DataTables::of($datas)
             ->addIndexColumn()
+             ->editColumn('flash_deal',function(Product $data){
+                    return '<input type="checkbox" class="flash_deal_product_id" value="'.$data->id.'">';      
+              })
+
+             ->editColumn('flash_deal_status',function(Product $data){
+                          if ($data->flash_deal==0) 
+                          {
+                            return '<span class="badge badge-success">Yes</span>';
+                          }else{
+                            return '<span class="badge badge-danger">No</span>';
+                          }
+                           
+              })
              ->editColumn('thumbnail',function(Product $data){
 
                       $url=$data->thumbnail ? asset("assets/backend/image/product/small/".$data->thumbnail) 
                       :asset("assets/backend/image/default.png");
                       return '<img src='.$url.' border="0" width="120" height="50" class="img-rounded" />';      
               })
-
-             ->editColumn('flash_deal',function(Product $data){
-                  return '<a href="javascript:void(0)" data-target="#flashDeal" data-toggle="modal" class="btn btn-dark show_flash_deal" product_id="'.$data->id.'" data-action="'.route('admin.show_flash_deal').'">
-                      <span class="btn-icon-label"></span>Flash Deal
-                    </a>';
-              })
-
              ->editColumn('attribute',function(Product $data){
                      return '<div class="btn-group btn-group-medium" role="group" aria-label="Basic example">
                                   <a href="'.route('admin.gallery_list',$data->id).'" class="btn btn-dark btn-icon">
@@ -71,7 +77,7 @@ class ProductController extends Controller
                        <i class="fa fa-trash"></i>
                       ';
             })
-           ->rawColumns(['thumbnail','flash_deal','attribute','action'])
+           ->rawColumns(['flash_deal','flash_deal_status','thumbnail','attribute','action'])
             ->make(true);
         }
 
@@ -353,7 +359,11 @@ class ProductController extends Controller
 
     }
 
-    public function show_flash_deal(Request $request){
+    public function show_flash_deal(Request $request)
+    {
+
+        
+
           $product=Product::findOrFail($request->product_id);
 
           return \response()->json([
@@ -418,7 +428,16 @@ class ProductController extends Controller
         {
             $product->top_sale=0;
         }
+      }elseif ($request->type=="publish") {
+        if ($product->publish==0) 
+        {
+          $product->publish=1;
+        }else
+        {
+            $product->publish=0;
+        }
       }
+      
 
       $product->save();
 
@@ -432,20 +451,31 @@ class ProductController extends Controller
     public function set_flash_deal(Request $request)
     {
 
-       $product=Product::findOrFail($request->product_id);
+   
+        $product_id=explode(',', $request->product_id[0]);
+        foreach ($product_id as $id) 
+        {
+          $product=Product::findOrFail($id);
 
-       if ($request->has('flash_deal')) 
-          {
-            $product->flash_deal=$request->flash_deal;
-            $product->end_date=date("Y-m-d",strtotime($request->end_date));
-            $product->discount=$request->discount;
-          }else
-          {
-              $product->flash_deal=1;
-              $product->end_date=null;
-              $product->discount=0;        
-          }
-          $product->save();
+          if ($request->has('flash_deal')) 
+             {
+               $product->flash_deal=$request->flash_deal;
+               $product->end_date=date("Y-m-d",strtotime($request->end_date));
+               $product->discount=$request->discount;
+                $product->save();
+             }else
+             {
+                 $product->flash_deal=1;
+                 $product->end_date=null;
+                 $product->discount=0;
+                  $product->save();       
+             }
+        }
+      
+       
+
+
+         // $product->save();
           return \response()->json([
                   'message' => "Successfully updated",
                   'status_code' => 200

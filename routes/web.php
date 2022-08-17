@@ -125,7 +125,6 @@ Route::group(['prefix'=>'admin'],function(){
 	Route::get('product_edit/{slug}',[ProductController::class,'edit'])->name('admin.product_edit');
 	Route::post('product_update',[ProductController::class,'update'])->name('admin.product_update');
 	Route::get('product_detail/{slug}',[ProductController::class,'product_detail'])->name('admin.product_detail');
-
 	Route::post('product_delete',[ProductController::class,'delete'])->name('admin.product_delete');
 
 	Route::post('update_product_status',[ProductController::class,'update_product_status'])->name('admin.update_product_status');

@@ -21,25 +21,25 @@ class HomeController extends Controller
 
 
 
-      $featureds   =Product::where(['featured'=>0,'sale_type'=>'retail','flash_deal'=>1])
+      $featureds   =Product::where(['featured'=>0,'publish'=>0,'flash_deal'=>1])
       ->orderByDesc('id')->take(10)->get();
-      $best_sales  =Product::where(['best_sale'=>0,'sale_type'=>'retail','flash_deal'=>1])
+      $best_sales  =Product::where(['best_sale'=>0,'publish'=>0,'flash_deal'=>1])
       ->orderByDesc('id')->take(10)->get();
-      $trendings   =Product::where(['trending'=>0,'sale_type'=>'retail','flash_deal'=>1])
+      $trendings   =Product::where(['trending'=>0,'publish'=>0,'flash_deal'=>1])
       ->orderByDesc('id')->take(10)->get();
-      $new_arrivals=Product::where(['new_arrival'=>0,'sale_type'=>'retail','flash_deal'=>1])
+      $new_arrivals=Product::where(['new_arrival'=>0,'publish'=>0,'flash_deal'=>1])
       ->orderByDesc('id')->take(10)->get();
-      $top_sales  =Product::where(['top_sale'=>0,'sale_type'=>'retail','flash_deal'=>1])
+      $top_sales  =Product::where(['top_sale'=>0,'publish'=>0,'flash_deal'=>1])
       ->orderByDesc('id')->take(10)->get();
-      $hot_sales  =Product::where(['hot'=>0,'sale_type'=>'retail','flash_deal'=>1])
+      $hot_sales  =Product::where(['hot'=>0,'publish'=>0,'flash_deal'=>1])
       ->orderByDesc('id')->take(10)->get();
-      $flash_deals =Product::where(['flash_deal'=>0])->orderBy('updated_at','DESC')->take(10)->get();
+      $flash_deals =Product::where(['flash_deal'=>0,'publish'=>0])->orderBy('updated_at','DESC')->take(10)->get();
 
       $sliders=DB::table('sliders')->orderBy('id','desc')->get();
-       $best_sales1  =Product::where(['best_sale'=>0,'sale_type'=>'retail','flash_deal'=>1])
+       $best_sales1  =Product::where(['best_sale'=>0,'publish'=>0,'flash_deal'=>1])
        ->orderByDesc('id')->take(4)->get();
 
-        $best_sales2  =Product::where(['best_sale'=>0,'sale_type'=>'retail','flash_deal'=>1])
+        $best_sales2  =Product::where(['best_sale'=>0,'publish'=>0,'flash_deal'=>1])
        ->orderByDesc('id')->skip(4)->take(4)->get();
       
       return view('index',compact('featureds','best_sales','trendings','new_arrivals','top_sales','flash_deals','sliders','hot_sales','best_sales1','best_sales2'));
@@ -51,26 +51,37 @@ class HomeController extends Controller
     public function subcategory_product($id)
     {
 
-      $products=Product::where(['sub_category_id'=>$id,'sale_type'=>'retail','flash_deal'=>1])
+      $products=Product::where(['sub_category_id'=>$id,'publish'=>0,'flash_deal'=>1])
       ->orderBy('id','DESC')->paginate(10);
       $sub_cat=SubCategory::findOrFail($id);
       return view('front.sub_category',compact('products','sub_cat'));
+    }
+
+
+    public function childcategory_product($id)
+    {
+
+      $products=Product::where(['child_category_id'=>$id,'publish'=>0,'flash_deal'=>1])
+      ->orderBy('id','DESC')->paginate(10);
+      $child_cat=ChildCategory::findOrFail($id);
+      return view('front.child_category',compact('products','child_cat'));
     }
 
     public function product_detail($slug)
     {
     	  $product=Product::where('slug',$slug)->first();
         $releted_products=Product::where("category_id",$product->category_id)->get();
-        $recommendeds=Product::all()->where('sale_type','!=','whole')->random(8);
-        $new_products=DB::table('products')->orderBy('id','DESC')->take(3)->get();
-    	 return view('front.product_detail',compact('product','releted_products','recommendeds','new_products'));
+        $new_products=DB::table('products')->where(['publish'=>0])->orderBy('id','DESC')->take(3)->get();
+    	 return view('front.product_detail',compact('product','releted_products','new_products'));
 
     }
+
+   
 
 
     public function category_product($id)
     {
-         $products=Product::where('category_id','=',$id)->latest()->paginate(10);
+         $products=Product::where('category_id','=',$id)->where(['publish'=>0])->latest()->paginate(10);
          $category=Category::findOrFail($id);
          return view('front.category_product',compact("products","category"));
     }
@@ -79,7 +90,7 @@ class HomeController extends Controller
 
     public function brand_wise_product($id)
     {
-         $products=Product::where(['brand_id'=>$id,'sale_type'=>'retail','flash_deal'=>1])
+         $products=Product::where(['brand_id'=>$id,'publish'=>0,'flash_deal'=>1])
          ->orderBy('id','DESC')->paginate(12);
          $brand=Brand::findOrFail($id);
          return view('front.brand_product',compact('products','brand'));
@@ -92,19 +103,20 @@ class HomeController extends Controller
         if ($request->isMethod('post')){
            
           if (!empty($request->keyword) && empty($request->category_id)) {
-              $products=Product::where('name',"LIKE","%$request->keyword%")->paginate(12);
+              $products=Product::where('name',"LIKE","%$request->keyword%")->where(['publish'=>0])->paginate(12);
 
           }elseif (empty($request->keyword) && !empty($request->category_id)) {
-              $products=Product::where('category_id',$request->category_id)->paginate(12);
+              $products=Product::where('category_id',$request->category_id)->where(['publish'=>0])->paginate(12);
 
           }elseif (!empty($request->keyword) && !empty($request->category_id)) {
 
               $products=Product::where('category_id',$request->category_id)
+              ->where(['publish'=>0])
               ->Orwhere('name',"LIKE","%$request->keyword%")
               ->paginate(12);
 
           }else{
-             $products=Product::latest()->paginate(12);;
+             $products=Product::latest()->where(['publish'=>0])->paginate(12);;
          }
 
          return view('front.search',compact("products"));

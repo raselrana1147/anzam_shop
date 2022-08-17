@@ -50,7 +50,7 @@ class ReportController extends Controller
     	    ->get()->sum('quantity');
 
  
-    	return view('admin.report.daily_report',compact('orders','total_pro_amount','total_orders','total_quantity'));
+    	  return view('admin.report.daily_report',compact('orders','total_pro_amount','total_orders','total_quantity'));
     }
 
 

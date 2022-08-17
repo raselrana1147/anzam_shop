@@ -49,4 +49,10 @@ class Product extends Model
     {
         return strip_tags(html_entity_decode(htmlspecialchars_decode(htmlentities(htmlspecialchars($vlaue)))));
     }
+
+
+    public function price()
+    {
+         return $price=$this->flash_deal==0 ? $this->current_price-($this->current_price*$this->discount/100) : $this->current_price;
+    }
 }

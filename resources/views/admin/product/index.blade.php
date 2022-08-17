@@ -26,17 +26,22 @@
            <div class="card">
                <div class="card-body">
                      <a href="{{ route('admin.product_create') }}" class="btn btn-primary btn-icon float-right"><span class="btn-icon-label"><i class="fas fa-plus mr-2"></i></span>Add New</a>
+
                     <h4 class="mt-0 header-title">Product List</h4>
+
+                    <a href="javascript:void(0)" data-target="#flashDeal" data-toggle="modal" class="btn btn-dark btn-icon flash_deal_button" style="display: none"><span class="btn-icon-label"><i class="fas fa-plus mr-2"></i></span>Set Flash Deal</a>
+
                    <table id="tables_item" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                        <thead>
                        <tr>
-                           <th>Serial</th>
+                           <th>Fash Deal</th>
+                           <th>Fash Deal Status</th>
                            <th>Image</th>
                            <th>Name</th>
                            <th>Sale Price</th>
-                           <th>Flash Deal</th>
                            <th>Attributes</th>
                            <th>Action</th>
+
                        </tr>
                        </thead>
                       
@@ -90,6 +95,11 @@
                       <input type="checkbox" id="top_sale" switch="dark" class="change_product_status" status_type="top_sale"/>
                       <label for="top_sale" data-on-label="Yes" data-off-label="No"></label><span>Top sale</span>
                   </div>
+
+                  <div>
+                      <input type="checkbox" id="publish" switch="dark" class="change_product_status" status_type="publish"/>
+                      <label for="publish" data-on-label="Yes" data-off-label="No"></label><span>Publish</span>
+                  </div>
                   
 
                  </div>
@@ -104,7 +114,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title mt-0" id="myModalLabel">Product Status</h5>
+                <h5 class="modal-title mt-0" id="myModalLabel">Set Flash deal</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -118,7 +128,7 @@
                  
                                  <form id="set_flash_deal" data-action="{{ route('admin.set_flash_deal') }}" method="POST">
                                   @csrf
-                                  <input type="hidden" name="product_id" value="" class="keep_product_id">
+                                  <input type="hidden" name="product_id[]" value="" class="keep_product_id">
                                   <div>
                                       <input type="checkbox" id="flash_deal"  switch="dark" status_type="flash_deal" name="flash_deal" value="0" />
                                       <label for="flash_deal" data-on-label="Yes" data-off-label="No"></label><span>Flash Deal</span>
@@ -184,11 +194,11 @@
              pagingType: "full_numbers",
              ajax: '{{ route('admin.load_product') }}',
              columns: [
-                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                 {data: 'flash_deal', name: 'flash_deal'},
+                 {data: 'flash_deal_status', name: 'flash_deal_status'},
                  { data: 'thumbnail',name:'thumbnail'},
                  { data: 'name',name:'name'},
                  { data: 'current_price',name:'current_price'},
-                 { data: 'flash_deal',name:'flash_deal'},
                  { data: 'attribute',name:'attribute'},
                  { data: 'action',name:'action' },
              ],
@@ -198,6 +208,28 @@
                },
               
          });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $('body').on('click','.flash_deal_product_id',function(){
+
+                var products = [];
+                    $.each($(".flash_deal_product_id:checked"), function(){
+                        products.push($(this).val());
+                    });
+                     
+                    if(products.length>=1){
+                          $('.flash_deal_button').show();
+                               
+                    }else{
+                       $('.flash_deal_button').hide();
+                      
+                    }
+                  $('.keep_product_id').val(products)
+                    
+            });
+        });
     </script>
    
 @endsection()

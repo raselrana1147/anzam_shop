@@ -37,9 +37,9 @@
                                                         <button type="button" class="addToCart add_to_cart_single" title="Add to cart" product_id="{{$featured->id}}" data-action="{{ route('add_to_cart_single') }}">
                                                             <span>Add to cart </span>   
                                                         </button>
-                                                        <button type="button" class="wishlist btn-button" title="Add to Wish List" onclick="wishlist.add('60');"><i class="fa fa-heart-o"></i><span>Add to Wish List</span>
+                                                        <button type="button" class="wishlist btn-button add_to_wishlist" title="Add to Wish List" product_id="{{$featured->id}}" data-action="{{ route('add_to_wishlist') }}"><i class="fa fa-heart-o"></i><span>Add to Wish List</span>
                                                         </button>
-                                                        <button type="button" class="compare btn-button" title="Compare this Product " onclick="compare.add('60');"><i class="fa fa-retweet"></i><span>Compare this Product</span>
+                                                        <button type="button" class="compare btn-button add_to_comparelist" title="Compare this Product " product_id="{{$featured->id}}" data-action="{{ route('add_to_comparelist') }}"><i class="fa fa-retweet"></i><span>Compare this Product</span>
                                                         </button>
                                                         
                                                     </div>

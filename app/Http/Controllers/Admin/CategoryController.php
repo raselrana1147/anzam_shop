@@ -101,7 +101,7 @@ class CategoryController extends Controller
                         Image::make($image)->save($original_image_path);
                         Image::make($image)->resize(1920,680)->save($large_image_path);
                         Image::make($image)->resize(1000,529)->save($medium_image_path);
-                        Image::make($image)->resize(100,100)->save($small_image_path);
+                        Image::make($image)->resize(260,280)->save($small_image_path);
                         $category->image = $image_name;
                     
                 }
@@ -181,7 +181,7 @@ class CategoryController extends Controller
                         Image::make($image)->save($original_image_path);
                         Image::make($image)->resize(1920,680)->save($large_image_path);
                         Image::make($image)->resize(1000,529)->save($medium_image_path);
-                        Image::make($image)->resize(100,100)->save($small_image_path);
+                        Image::make($image)->resize(260,280)->save($small_image_path);
                         $category->image = $image_name;
                     
                 }

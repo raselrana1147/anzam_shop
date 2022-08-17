@@ -17,11 +17,13 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('title')->nullable();
-            $table->unsignedBigInteger('author_id');
+            $table->unsignedBigInteger('author_id')->nullable();
+            $table->unsignedBigInteger('seller_id')->nullable();
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('sub_category_id')->nullable();
             $table->unsignedBigInteger('child_category_id')->nullable();
             $table->unsignedBigInteger('brand_id');
+            $table->enum('product_type',['inhouse','seller']);
             $table->float('previous_price',11,2)->default(0);
             $table->float('current_price',11,2)->default(0);
             $table->float('discount',11,2)->default(0);
@@ -51,11 +53,13 @@ class CreateProductsTable extends Migration
             $table->tinyInteger('big_save')->default('0')->comment('0=big save,1=Not Big save');
             $table->tinyInteger('new_arrival')->default('0')->comment('0=new arrival,1=Not New arrival');
             $table->tinyInteger('trending')->default('0')->comment('0=trending,1=Not Trending');
+            $table->tinyInteger('publish')->default('1')->comment('0=Publish,1=Not Publish');
             $table->tinyInteger('check_attributes')->default('0')->comment('0=yes,1=no');
             $table->timestamps();
 
             // propagration contrains
             $table->foreign('author_id')->references('id')->on('admins')->onDelete('cascade');
+            $table->foreign('seller_id')->references('id')->on('sellers')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');
             $table->foreign('child_category_id')->references('id')->on('child_categories')->onDelete('cascade');

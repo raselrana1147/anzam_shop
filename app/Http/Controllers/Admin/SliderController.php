@@ -102,7 +102,7 @@ class SliderController extends Controller
                          Image::make($image)->save($original_image_path);
                          Image::make($image)->resize(1920,680)->save($large_image_path);
                          Image::make($image)->resize(848,380)->save($medium_image_path);
-                         Image::make($image)->resize(465,465)->save($small_image_path);
+                         Image::make($image)->resize(1030,430)->save($small_image_path);
                          $slider->image = $image_name;
                      
                  }
@@ -133,9 +133,7 @@ class SliderController extends Controller
 
     public function update(Request $request)
     {
-     
-     
-
+    
        if ($request->isMethod('post'))
          {
              DB::beginTransaction();
@@ -184,7 +182,7 @@ class SliderController extends Controller
                          Image::make($image)->save($original_image_path);
                          Image::make($image)->resize(1920,680)->save($large_image_path);
                          Image::make($image)->resize(1000,529)->save($medium_image_path);
-                         Image::make($image)->resize(465,465)->save($small_image_path);
+                         Image::make($image)->resize(1030,430)->save($small_image_path);
                          $slider->image = $image_name;
                      
                  }

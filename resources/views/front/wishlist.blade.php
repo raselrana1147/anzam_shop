@@ -28,8 +28,7 @@
 						</thead>
 						<tbody>
 							@foreach ($wishlists as $wishlist)
-								{{-- expr --}}
-							
+								
 							<tr class="wishlist_row{{$wishlist->id}}">
 								<td class="text-center">
 									<a  href="product.html"><img width="70px" src="{{ asset('assets/backend/image/product/small/'.$wishlist->product->thumbnail) }}" alt="Aspire Ultrabook Laptop" title="Aspire Ultrabook Laptop">

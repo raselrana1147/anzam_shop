@@ -42,7 +42,7 @@ class WishlistController extends Controller
 
      public function delete(Request $request)
     {
-      
+
         $wishlist=Wishlist::findOrFail($request->wishlist_id);
         $wishlist->delete();
         $notification=['status'=>'200', 'type'=>'success','message'=>'Succeddfully deleted','total_wishlist'=>total_wishlist()];

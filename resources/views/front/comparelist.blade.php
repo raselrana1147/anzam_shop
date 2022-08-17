@@ -97,7 +97,8 @@
 	                            @foreach ($comparelists as $comparelist)
 	                            <td>
 	                            	<input type="button"  product_id="{{$comparelist->product->id}}" data-action="{{ route('add_to_cart_single') }}" class="btn btn-primary btn-block add_to_cart_single" value="Add to Cart">
-	                            <a class="btn btn-danger btn-block" href="">Remove</a>
+
+	                            <a href="{{ route('delete.comparelist',$comparelist->id) }}" class="btn btn-danger btn-block" >Remove</a>
 	                        </td>
 	                            
 	                           

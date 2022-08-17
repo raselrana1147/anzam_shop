@@ -16,6 +16,7 @@ class CompareListController extends Controller
 
     public function add_to_comparelist(Request $request)
     {
+
     	if (Auth::check()) 
     	{
     		$check=CompareList::where(['user_id'=>Auth::user()->id,'product_id'=>$request->product_id])->first();
@@ -37,6 +38,7 @@ class CompareListController extends Controller
 
     public function view_comparelist()
     {
+        
     	if (Auth::check()) {
     		$comparelists=CompareList::where('user_id',Auth::user()->id)->get();
     		 return view('front.comparelist',compact('comparelists'));
@@ -52,7 +54,6 @@ class CompareListController extends Controller
 
     public function delete_comparelist($id)
     {
-      
         $comparelist=CompareList::findOrFail($id);
         $comparelist->delete();
          $notification=array(

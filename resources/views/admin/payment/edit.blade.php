@@ -1,6 +1,6 @@
 @extends("layouts.admin")
-@section("title","Admin | Brand Update")
-@section("breadcrumb","Brand Update")
+@section("title","Admin | Payment Update")
+@section("breadcrumb","Payment Update")
 @section("content")
       <div class="message_section" style="display: none"></div>
    <div class="row">
@@ -8,20 +8,33 @@
        <div class="col-lg-8 offset-2">
            <div class="card">
                <div class="card-body">
-   					 <a href="javascript:history.back();" class="btn btn-primary btn-icon float-right mb-2">
-   					 	   <span class="btn-icon-label"><i class="fas fa-arrow-left mr-2"></i></span>Back</a>
-                   <form id="submit_form" class="custom-validation" data-action="{{ route('admin.brand_update') }}" enctype="multipart/form-data" method="POST">
+             <a href="javascript:history.back();" class="btn btn-primary btn-icon float-right mb-2">
+                 <span class="btn-icon-label"><i class="fas fa-arrow-left mr-2"></i></span>Back</a>
+                  <form id="submit_form" class="custom-validation" data-action="{{ route('admin.payment_update') }}" enctype="multipart/form-data" method="POST">
                     @csrf
-                       <input type="hidden" name="id" value="{{$brand->id}}">
+                      <input type="hidden" name="id" value="{{$payment->id}}">
                        <div class="form-group">
-                           <label>Brand Name</label>
-                           <input type="text" class="form-control" name="brand_name" required value="{{$brand->brand_name}}" />
+                           <label>Payment Name</label>
+                           <input type="text" class="form-control" name="payment_name" required value="{{$payment->payment_name}}" />
                        </div>
+
+                       <div class="form-group">
+                           <label>Account Number</label>
+                           <input type="text" class="form-control" name="account_number"value="{{$payment->account_number}}"/>
+                       </div>
+
+
+                       <div class="form-group">
+                           <label>Ref number</label>
+                           <input type="text" class="form-control" name="ref_number" value="{{$payment->ref_number}}"/>
+                       </div>
+
+
    
                        <div class="form-group">
                            <label>Image</label>
                            <div>
-                               <input type="file" name="image" class="form-control dropify" data-default-file="{{($brand->image !=null) ?  asset('assets/backend/image/brand/small/'.$brand->image) : asset('assets/backend/image/default.png') }}"/>
+                               <input type="file" name="image" class="form-control dropify" data-default-file="{{($payment->image !=null) ?  asset('assets/backend/image/payment/small/'.$payment->image) : asset('assets/backend/image/default.png') }}"/>
                            </div>
                            
                        </div>

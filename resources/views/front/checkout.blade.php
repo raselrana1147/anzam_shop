@@ -49,7 +49,7 @@
 
 								  <div class="form-group">
 									<label for="input-payment-fax" class="control-label">City</label>
-	                               <select name="city" required="">
+	                               <select name="city" required="" class="form-control">
 	                               		<option value="">--Select options--</option>
    									   	<option value="Dhaka">Dhaka</option>
    									   	<option value="Mymensing">Mymensing</option>
@@ -147,6 +147,32 @@
 							  </div>
 						  </div>
 						</div>
+
+						<div class="col-sm-12">
+						  <div class="panel panel-default">
+							<div class="panel-heading">
+							  <h4 class="panel-title"><i class="fa fa-pencil"></i>Payment Detail</h4>
+							</div>
+							  <div class="panel-body">
+							  	@foreach ($payments as $payment)
+
+							  	  <input type="radio" class="select_payment" name="payment_id" value="{{$payment->id}}"  {{($payment->account_number==NULL) ? 'checked' : ''}} account_number="{{$payment->account_number}}" image_name="{{$payment->image}}" account_type="{{$payment->type}}" ref_num="{{$payment->ref_number}}">
+							  	       {{$payment->payment_name}}
+							  	 @endforeach
+
+						  	 		<p id="payment_area" style="display: none">
+						  	 		    <label>Transaction Number</label>      
+						  	          
+						  	             <input type="text" class="form-control" name="transaction_number" id="transaction_number" /> 
+
+						  	             <img src="" class="set_image" style="width: 40px;height: 40px;position: absolute;"><br>
+						  	 		</p>
+
+							  </div>
+						  </div>
+						</div>
+
+
 						<div class="col-sm-12">
 						  <div class="panel panel-default">
 							<div class="panel-heading">
@@ -166,6 +192,8 @@
 							  </div>
 						  </div>
 						</div>
+
+
 					  </div>
 					</div>
 				  </div>
@@ -177,4 +205,32 @@
 				</form>
 			</div>
 		</div>
+@endsection
+
+@section('ecommerce_js')
+
+<script>
+    $(document).ready(function(){
+        $('body').on('click','.select_payment',function(){
+            let payment_id=$(this).val();
+            let account_number=$(this).attr('account_number');
+            let type=$(this).attr('account_type');
+            let ref_num=$(this).attr('ref_num');
+
+            if (account_number=="") {
+                $('#account_number').text();
+                $('#payment_area, #accountt_area').hide();
+                $('#transaction_number').removeAttr('required');
+            }else{
+                $('.set_number').text(account_number+' ( '+type+' ) '+' Referal Number '+ref_num);
+                $('#payment_area, #accountt_area').show();
+                $('#transaction_number').attr('required', 'true');
+                let image=$(this).attr('image_name')
+                $('.set_image').attr('src', '{{ asset('assets/backend/image/payment/small/') }}'+'/'+image);
+            }
+        });
+
+      
+    });
+</script>
 @endsection

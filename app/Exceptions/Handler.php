@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
     }
 
 
-     protected function unauthenticated($request, AuthenticationException $exception)
+    protected function unauthenticated($request, AuthenticationException $exception)
     {
         if ($request->expectsJson()) {
             return response()->json(
@@ -53,14 +53,15 @@ class Handler extends ExceptionHandler
             ], 401);
         }
 
-
-
         $guard = Arr::get($exception->guards(), 0);
        
-
         switch ($guard) {
             case 'admin':
                 $login = 'admin.login';
+                break;
+            case 'seller':
+
+               $login = 'seller.login';
                 break;
             case 'api':
                return response()->json(

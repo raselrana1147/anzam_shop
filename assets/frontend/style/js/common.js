@@ -49,4 +49,13 @@
   	$('.max_price').val(max);
   })
 
+
+
+  // animate seller zone
+
+    setInterval(function(){
+        $('.anaimate_seller_zone').fadeToggle(300)
+    },300)
+
+
 })

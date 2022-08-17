@@ -19,7 +19,7 @@ use App\Models\Admin\Payment;
 class PaymentController extends Controller
 {
     
-      public function __construct()
+        public function __construct()
         {
             $this->middleware('auth:admin');
         }
@@ -52,26 +52,26 @@ class PaymentController extends Controller
 
         public function index()
         {
-        	return view('admin.payment.index');
+          return view('admin.payment.index');
         }
 
         public function edit($id)
         {
-           $brand=Brand::findOrFail($id);
-           return view('admin.brand.edit',compact("brand"));
+           $payment=Payment::findOrFail($id);
+           return view('admin.payment.edit',compact("payment"));
         }
 
        public function create()
        {
-       	 return view('admin.payment.create');
+         return view('admin.payment.create');
        }
 
        public function store(Request $request)
        {
 
-       	$this->validate($request,[
-       	       'brand_name'=>'unique:brands',
-       	 ]);
+        $this->validate($request,[
+               'payment_name'=>'unique:payments',
+         ]);
 
           if ($request->isMethod('post'))
             {
@@ -134,9 +134,9 @@ class PaymentController extends Controller
        public function update(Request $request)
        {
         
-         $brand=Brand::findOrFail($request->id);
+         $payment=Payment::findOrFail($request->id);
          $this->validate($request,[
-              'brand_name'=>'unique:brands,brand_name,'.$brand->id,
+              'payment_name'=>'unique:payments,payment_name,'.$payment->id,
           ]);
 
 
@@ -146,56 +146,57 @@ class PaymentController extends Controller
 
                 try{
 
-                    //brand 
-                    $brand=Brand::findOrFail($request->id);
-                    $brand->brand_name = $request->brand_name;
+                    //payment 
+                   $payment->payment_name = $request->payment_name;
+                   $payment->account_number = $request->account_number;
+                   $payment->ref_number = $request->ref_number;
                   
             
                     if($request->hasFile('image')){
 
                             // delete current image
 
-                          if (File::exists(base_path('/assets/backend/image/brand/small/'.$brand->image))) 
+                          if (File::exists(base_path('/assets/backend/image/payment/small/'.$payment->image))) 
                             {
-                              File::delete(base_path('/assets/backend/image/brand/small/'.$brand->image));
+                              File::delete(base_path('/assets/backend/image/payment/small/'.$payment->image));
                             }
-                            if (File::exists(base_path('/assets/backend/image/brand/medium/'.$brand->image))) 
+                            if (File::exists(base_path('/assets/backend/image/payment/medium/'.$payment->image))) 
                             {
-                              File::delete(base_path('/assets/backend/image/brand/medium/'.$brand->image));
+                              File::delete(base_path('/assets/backend/image/payment/medium/'.$payment->image));
                             }
 
-                            if (File::exists(base_path('/assets/backend/image/brand/large/'.$brand->image)))
+                            if (File::exists(base_path('/assets/backend/image/payment/large/'.$payment->image)))
                              {
-                               File::delete(base_path('/assets/backend/image/brand/large/'.$brand->image));
+                               File::delete(base_path('/assets/backend/image/payment/large/'.$payment->image));
                              }
 
-                             if (File::exists(base_path('/assets/backend/image/brand/original/'.$brand->image)))
+                             if (File::exists(base_path('/assets/backend/image/payment/original/'.$payment->image)))
                              {
-                                File::delete(base_path('/assets/backend/image/brand/original/'.$brand->image));
+                                File::delete(base_path('/assets/backend/image/payment/original/'.$payment->image));
                              }
                             // upload new image
                             $image=$request->image;
                             $image_name=strtolower(Str::random(10)).time().".".$image->getClientOriginalExtension();
-                            $original_image_path = base_path().'/assets/backend/image/brand/original/'.$image_name;
-                            $large_image_path = base_path().'/assets/backend/image/brand/large/'.$image_name;
-                            $medium_image_path = base_path().'/assets/backend/image/brand/medium/'.$image_name;
-                            $small_image_path = base_path().'/assets/backend/image/brand/small/'.$image_name;
+                            $original_image_path = base_path().'/assets/backend/image/payment/original/'.$image_name;
+                            $large_image_path = base_path().'/assets/backend/image/payment/large/'.$image_name;
+                            $medium_image_path = base_path().'/assets/backend/image/payment/medium/'.$image_name;
+                            $small_image_path = base_path().'/assets/backend/image/payment/small/'.$image_name;
 
                             //Resize Image
                             Image::make($image)->save($original_image_path);
                             Image::make($image)->resize(1920,980)->save($large_image_path);
                             Image::make($image)->resize(1000,850)->save($medium_image_path);
                             Image::make($image)->resize(465,465)->save($small_image_path);
-                            $brand->image = $image_name;
+                            $payment->image = $image_name;
                         
                     }
 
-                    $brand->save();
+                    $payment->save();
 
                     DB::commit();
 
                     return \response()->json([
-                        'message' => 'Successful Updated',
+                        'message' => 'Successfuly Updated',
                         'status_code' => 200
                     ], Response::HTTP_OK);
 
@@ -216,25 +217,25 @@ class PaymentController extends Controller
        public function delete(Request $request)
        {
 
-        $data=Brand::findOrFail($request->item_id);
+        $data=Payment::findOrFail($request->item_id);
 
-        if (File::exists(base_path('/assets/backend/image/brand/small/'.$data->image))) 
+        if (File::exists(base_path('/assets/backend/image/payment/small/'.$data->image))) 
           {
-            File::delete(base_path('/assets/backend/image/brand/small/'.$data->image));
+            File::delete(base_path('/assets/backend/image/payment/small/'.$data->image));
           }
-          if (File::exists(base_path('/assets/backend/image/brand/medium/'.$data->image))) 
+          if (File::exists(base_path('/assets/backend/image/payment/medium/'.$data->image))) 
           {
-            File::delete(base_path('/assets/backend/image/brand/medium/'.$data->image));
+            File::delete(base_path('/assets/backend/image/payment/medium/'.$data->image));
           }
 
-          if (File::exists(base_path('/assets/backend/image/brand/large/'.$data->image)))
+          if (File::exists(base_path('/assets/backend/image/payment/large/'.$data->image)))
            {
-             File::delete(base_path('/assets/backend/image/brand/large/'.$data->image));
+             File::delete(base_path('/assets/backend/image/payment/large/'.$data->image));
            }
 
-           if (File::exists(base_path('/assets/backend/image/brand/original/'.$data->image)))
+           if (File::exists(base_path('/assets/backend/image/payment/original/'.$data->image)))
            {
-              File::delete(base_path('/assets/backend/image/brand/original/'.$data->image));
+              File::delete(base_path('/assets/backend/image/payment/original/'.$data->image));
            }
         $data->delete();
         $notification=['alert'=>'success','message'=>'Successfully Delete','status'=>200];

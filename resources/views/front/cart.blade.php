@@ -40,8 +40,10 @@
 
 		                        <button type="button" data-toggle="tooltip" title="Remove" class="btn btn-danger delete_cart" cart_id="{{$cart->id}}" data-action="{{ route('cart.delete') }}"><i class="fa fa-times-circle"></i></button>
 		                        </span></div></td>
-		                    <td class="text-right">{{price_format($cart->product->current_price)}}</td>
-		                    <td class="text-right each_cart_price{{$cart->id}}">{{price_format($cart->product->current_price*$cart->quantity)}}</td>
+
+		                    <td class="text-right">{{price_format($cart->product->price())}}</td>
+		                    <td class="text-right each_cart_price{{$cart->id}}">{{price_format($cart->product->price()*$cart->quantity)}}
+		                    </td>
 		                  </tr>
 		                @endforeach
 		                </tbody>

@@ -274,3 +274,12 @@ function total_comparelist()
 {
   return CompareList::total_comparelist();
 }
+
+
+function icons(){
+
+      $icon=array(
+              'ico10.png','ico1.png','ico9','ico7','ico6.png','ico5.png','ico4.png','ico3.png','ico2.png','ico8.png'
+        );
+      return $icon;
+}

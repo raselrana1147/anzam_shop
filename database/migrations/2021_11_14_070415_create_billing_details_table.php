@@ -17,7 +17,7 @@ class CreateBillingDetailsTable extends Migration
            $table->id();
            $table->unsignedBigInteger('user_id');
            $table->unsignedBigInteger('order_id');
-           $table->text('customer_email');
+           $table->string('customer_email');
            $table->string('customer_name');
            $table->string('customer_phone');
            $table->text('customer_address');
